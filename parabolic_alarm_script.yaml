@@ -13,6 +13,8 @@ fields:
     selector:
       color_temp:
         unit: kelvin
+        min: 1000
+        max: 8000
     default: 6500
     name: Coldest Kelvin
   start_kelvin:
@@ -22,8 +24,8 @@ fields:
     selector:
       color_temp:
         unit: kelvin
-        min: 2500
-        max: 6500
+        min: 1000
+        max: 8000
     default: 2500
     name: Warmest Kelvin
   max_brightness_pct:
