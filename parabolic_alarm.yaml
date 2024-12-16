@@ -12,11 +12,11 @@ blueprint:
             - domain: input_datetime
     workday_sensor:
       name: Workday Sensor
-      description: Binary Sensor for determining whether it should run. Typically from Workday Integration
+      description: Binary Sensor or boolean switch for determining whether it should run. Typically from Workday Integration
       selector:
         entity:
           filter:
-            - domain: binary_sensor
+            - domain: ["binary_sensor", "input_boolean"]
     alarm_script:
       name: Script to trigger
       description: Light Alarm Script
@@ -133,9 +133,16 @@ blueprint:
           max: 60
       default: 5
 
-trigger:
-  - platform: time
-    at: !input alarm_start_time
+variables:
+  alarm_start_time: !input alarm_start_time
+  alarm_length_1: !input alarm_length_1
+  alarm_length_2: !input alarm_length_2
+  alarm_length_3: !input alarm_length_3
+  total_duration: "{{ alarm_length_1 + alarm_length_2 + alarm_length_3 }}"
+
+triggers:
+  - trigger: time
+    at: "{{ (now() - timedelta(minutes=total_duration)).strftime('%H:%M:00') == states(alarm_start_time) }}"
 
 condition:
   - condition: state
