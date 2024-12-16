@@ -3,13 +3,13 @@ blueprint:
   description: Turn a light on based on detected motion
   domain: automation
   input:
-    alarm_start_time:
+    alarm_start_time_sensor:
       name: Start Time
-      description: Datetime helper for alarm to start. Use time only and Workday sensor to determine what days to run.
+      description: Binary sensor helper for alarm to start. The sensor should be attached to the datetime helper with time only.
       selector:
         entity:
           filter:
-            - domain: input_datetime
+            - domain: binary_sensor
     workday_sensor:
       name: Workday Sensor
       description: Binary Sensor or boolean switch for determining whether it should run. Typically from Workday Integration
@@ -133,16 +133,10 @@ blueprint:
           max: 60
       default: 5
 
-variables:
-  alarm_start_time: !input alarm_start_time
-  alarm_length_1: !input alarm_length_1
-  alarm_length_2: !input alarm_length_2
-  alarm_length_3: !input alarm_length_3
-  total_duration: "{{ alarm_length_1 + alarm_length_2 + alarm_length_3 }}"
-
 triggers:
-  - trigger: time
-    at: "{{ (now() - timedelta(minutes=total_duration)).strftime('%H:%M:00') == states(alarm_start_time) }}"
+  - trigger: state
+    entity_id: !input alarm_start_time_sensor
+    to: "on"
 
 condition:
   - condition: state
